@@ -1,6 +1,7 @@
 package hellojpa;
 
 import hellojpa.entity.Member;
+import hellojpa.entity.Team;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -41,11 +42,32 @@ public class Main {
 
         try {
             // 비즈니스 로직 작성
-            Member member = new Member();
-//            member.setId(100L);
-            member.setName("안냐세요");
+            /**
+             * 객체를 테이블에 맞추어 모델링
+             * (외래키 식별자를 직접 다룸)
+             */
+            Team team = new Team();
+            team.setName("fc seoul");
+            em.persist(team);
 
-            em.persist(member); // persist 는 영구저장하다 라는 표현으로 기억하면 된다.
+            Member member = new Member();
+            member.setName("kim");
+            member.setAge(13);
+            member.setTeamId(member.getId());
+            em.persist(member);
+
+            //
+
+            /**
+             * Team해 을 조회한다.
+             * 객체를 테이블에 맞추어 데이터중심으로 모델링했기 때문에 협력관계를 만들 수 없다.
+             * 외래키로 조인해서 연관된 테이블을 찾는다.
+             * 객체는 참조를 이용해서 연관된 객체를 찾아야하는데, 그게 불가능하다.
+             */
+            Member findMember = em.find(Member.class, member.getId());
+            Long teamId = findMember.getTeamId();
+            Team findTeam = em.find(Team.class, teamId);
+
 
             tx.commit();
         } catch (Exception e) {
