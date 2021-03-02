@@ -42,7 +42,7 @@ public class Main {
         try {
             // 비즈니스 로직 작성
             Member member = new Member();
-            member.setId(100L);
+//            member.setId(100L);
             member.setName("안냐세요");
 
             em.persist(member); // persist 는 영구저장하다 라는 표현으로 기억하면 된다.
