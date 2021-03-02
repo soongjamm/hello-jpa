@@ -53,21 +53,15 @@ public class Main {
             Member member = new Member();
             member.setName("kim");
             member.setAge(13);
-            member.setTeam(team); // teamId 가 아닌, 객체 자체를 바로 저장
             em.persist(member);
 
-            //
-            em.flush();
-            em.clear();
+            // 역방향(주인이 아닌 방향)만 연관관계 설정 -> DB 에서 MEMBER 의 TEAM_ID 보면 null 이다.
+            team.getMembers().add(member);
 
-            /**
-             * Team해 을 조회한다.
-             * 외래키를 사용하지 않고, findMember 객체의 참조를 통해 바로 Team 을 찾을 수 있다.
-             */
-            Member findMember = em.find(Member.class, member.getId());
-            Team findTeam = em.find(Team.class, findMember.getTeam());
-
-            findTeam.getName();
+            // 주인에 연관관계 설정 ->DB 에서 MEMBER 의 TEAM_ID 가 제대로 저장된다.
+            // - (역방향에서는 연관관계 설정 안해도 됌)
+            // - 그러나 현업에서는 객체 관계를 고려하여 자바코드에서 맵핑되는 양쪽 다 값을 입력해주자.
+            member.setTeam(team);
 
             tx.commit();
         } catch (Exception e) {
@@ -79,7 +73,6 @@ public class Main {
              */
             em.close();
         }
-
 
         System.out.println("hello");
 
