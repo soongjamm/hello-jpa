@@ -43,8 +43,8 @@ public class Main {
         try {
             // 비즈니스 로직 작성
             /**
-             * 객체를 테이블에 맞추어 모델링
-             * (외래키 식별자를 직접 다룸)
+             * 객체지향 모델링 (ORM 맵핑)
+             * 단방향 관계
              */
             Team team = new Team();
             team.setName("fc seoul");
@@ -53,21 +53,21 @@ public class Main {
             Member member = new Member();
             member.setName("kim");
             member.setAge(13);
-            member.setTeamId(member.getId());
+            member.setTeam(team); // teamId 가 아닌, 객체 자체를 바로 저장
             em.persist(member);
 
             //
+            em.flush();
+            em.clear();
 
             /**
              * Team해 을 조회한다.
-             * 객체를 테이블에 맞추어 데이터중심으로 모델링했기 때문에 협력관계를 만들 수 없다.
-             * 외래키로 조인해서 연관된 테이블을 찾는다.
-             * 객체는 참조를 이용해서 연관된 객체를 찾아야하는데, 그게 불가능하다.
+             * 외래키를 사용하지 않고, findMember 객체의 참조를 통해 바로 Team 을 찾을 수 있다.
              */
             Member findMember = em.find(Member.class, member.getId());
-            Long teamId = findMember.getTeamId();
-            Team findTeam = em.find(Team.class, teamId);
+            Team findTeam = em.find(Team.class, findMember.getTeam());
 
+            findTeam.getName();
 
             tx.commit();
         } catch (Exception e) {

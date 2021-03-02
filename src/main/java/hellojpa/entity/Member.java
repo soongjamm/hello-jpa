@@ -15,11 +15,16 @@ public class Member {
     private int age;
 
     /**
-     *  객체를 테이블에 맞추어 모델링
-     *  (외래키 식별자를 직접 다룸)
+     *  단방향 관계를 만들 것이다.
+     *  @ManyToOne 인 이유는 Member 의 입장에서 Member 가 다수이고 Team 이 하나이기 때문이다.
+     *  이제 JPA 가 알아서 TEAM_ID 라는 FK 를 만들고 연관관계 매핑해준다.
+     *
+     *  fetch 옵션에 LAZY 를 줌으로서 Team 을 바로 조회하지 않고, 실제로 사용될 때 조회되도록 한다.
+     *  (전부 LAZY 권장. 꼭 필요한 시점에만 EAGER. 속단해서 최적화하지 말자.)
      */
-    @Column(name = "TEAM_ID")
-    private Long teamId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "TEAM_ID")
+    private Team team;
 
     public Long getId() {
         return id;
@@ -45,11 +50,11 @@ public class Member {
         this.age = age;
     }
 
-    public Long getTeamId() {
-        return teamId;
+    public Team getTeam() {
+        return team;
     }
 
-    public void setTeamId(Long teamId) {
-        this.teamId = teamId;
+    public void setTeam(Team team) {
+        this.team = team;
     }
 }
